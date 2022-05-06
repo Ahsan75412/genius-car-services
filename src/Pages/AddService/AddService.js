@@ -6,7 +6,7 @@ const AddService = () => {
 
     const onSubmit = data => {
         console.log(data);
-        const url = `http://localhost:5000/service`;
+        const url = `https://afternoon-stream-12422.herokuapp.com/service`;
         fetch(url, {
             method: 'POST',
             headers: {
@@ -15,10 +15,10 @@ const AddService = () => {
             body: JSON.stringify(data)
         })
 
-        .then(res => res.json())
-        .then(result => {
-            console.log(result);
-        })
+            .then(res => res.json())
+            .then(result => {
+                console.log(result);
+            })
     };
 
     return (
@@ -30,7 +30,7 @@ const AddService = () => {
                 <input className='mb-2' placeholder='Name' {...register("name", { required: true, maxLength: 20 })} />
                 <input className='mb-2' placeholder='Price' type="number" {...register("price")} />
                 <textarea className='mb-2' placeholder='Description' {...register("description")} />
-                <input className='btn btn-outline-primary w-50 mx-auto mt-5'   value = "Add Service" type="submit"/>
+                <input className='btn btn-outline-primary w-50 mx-auto mt-5' value="Add Service" type="submit" />
 
             </form>
         </div>

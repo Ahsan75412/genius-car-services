@@ -5,9 +5,11 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../../firebase.init';
 import Loading from '../../Shared/Loading/Loading';
 import SocialLogin from '../SocialLogin/SocialLogin';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PageTitle from '../../Shared/PageTitle/PageTitle';
+import axios from 'axios';
+import useToken from '../../../hooks/useToken';
 
 
 const Login = () => {
@@ -27,14 +29,16 @@ const Login = () => {
     ] = useSignInWithEmailAndPassword(auth);
 
     const [sendPasswordResetEmail, sending] = useSendPasswordResetEmail(auth);
+    const [token] = useToken(user);
 
-    if(loading || sending){
+    if (loading || sending) {
         return <Loading></Loading>
     }
 
 
-    if (user) {
+    if (token) {
         navigate(from, { replace: true });
+
     }
 
     if (error) {
@@ -42,12 +46,15 @@ const Login = () => {
 
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = async event => {
+        event.preventDefault();
         const email = emailRef.current.value;
         const password = passwordRef.current.value;
 
-        signInWithEmailAndPassword(email, password);
+        await signInWithEmailAndPassword(email, password);
+        // const { data } = await axios.post('https://afternoon-stream-12422.herokuapp.com/login', { email });
+        // localStorage.setItem('accessToken', data.accessToken);
+       
 
     }
 
@@ -57,15 +64,15 @@ const Login = () => {
 
     }
 
-    const resetPassword = async() => {
+    const resetPassword = async () => {
         const email = emailRef.current.value;
-     if(email){
-        await sendPasswordResetEmail(email);
-        toast.success('Password reset email sent');
-     }
-     else{
-        toast.error('Please enter your email');
-     }
+        if (email) {
+            await sendPasswordResetEmail(email);
+            toast.success('Password reset email sent');
+        }
+        else {
+            toast.error('Please enter your email');
+        }
     }
 
     return (
@@ -94,12 +101,12 @@ const Login = () => {
             {errorElement}
             <p>New to genius car? <Link to="/register" className='text-primary text-decoration-none' onClick={navigateRegister}>Please register</Link></p>
 
-            <p>Forget Password? <button  className='text-primary btn btn-link text-decoration-none' onClick={resetPassword}>Reset Password</button></p>
+            <p>Forget Password? <button className='text-primary btn btn-link text-decoration-none' onClick={resetPassword}>Reset Password</button></p>
 
             {/* social login component here  */}
             <SocialLogin></SocialLogin>
 
-            <ToastContainer />
+
         </div>
     );
 };
